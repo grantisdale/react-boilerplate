@@ -61,8 +61,7 @@ stages:
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
-        - task: Docker@2
-      displayName: Build and push an image to container registry
+      - task: Docker@2
       inputs:
         command: buildAndPush
         repository: $(IMAGE_NAME)
@@ -71,4 +70,5 @@ stages:
         tags: |
         $(Build.BuildId)
         latest
+      displayName: Build and push an image to container registry
 
