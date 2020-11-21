@@ -68,7 +68,7 @@ stages:
           dockerfile: $(DOCKERFILE_PATH)
           containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
           tags: |
-          $(Build.BuildId)
-          latest
+            $(Build.BuildId)
+            latest
         displayName: Build and push an image to container registry
 
