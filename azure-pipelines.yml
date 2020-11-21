@@ -1,0 +1,42 @@
+variables:
+  node_version: 12.19.0
+
+# Run for main & release branches
+trigger:
+  branches:
+    include:
+    - main
+    - release/*
+
+# Don't run for PRs
+pr: none
+
+stages:
+- stage: Test
+  jobs:
+  - job: Test
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '$(node_version)'
+        displayName: 'Install Node.js @ $(node_version)'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+        displayName: 'Npm Install'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run test'
+        displayName: 'Run Unit Tests'
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: 'Cobertura'
+          summaryFileLocation: 'coverage/cobertura-coverage.xml'
+        displayName: 'Publish Code Coverage to Azure DevOps'
+
+
+
+
