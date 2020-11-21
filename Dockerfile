@@ -1,4 +1,6 @@
-FROM node:12.19.0-alpine as build
+FROM node:12.19.0-slim as build
+RUN apt-get update \
+    && apt-get install -y build-essential
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
