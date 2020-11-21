@@ -34,7 +34,7 @@ stages:
       - script: |
           npm root -g
           ls -la ~/
-        name: Find Node Dir
+        displayNme: Find Node Dir
       - task: Npm@1
         inputs:
           command: 'install'
