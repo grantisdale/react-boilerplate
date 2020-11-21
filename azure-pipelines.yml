@@ -28,8 +28,9 @@ stages:
         displayName: 'Npm Install'
       - task: Npm@1
         inputs:
-          command: 'run lint'
-        displayName: 'Npm Install'
+          command: 'custom'
+          customCommand: 'run lint'
+        displayName: 'Lint the JS'
       - task: Npm@1
         inputs:
           command: 'custom'
