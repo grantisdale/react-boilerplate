@@ -1,5 +1,6 @@
 variables:
-  node_version: 12.19.0
+  NODE_VERSION: 12.19.0
+  NPM_CACHE_FOLDER: $(Pipeline.Workspace)/.npm
 
 # Run for main & release branches
 trigger:
@@ -18,10 +19,18 @@ stages:
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
+      - task: Cache@2
+        displayName: Cache .npm
+        inputs:
+          key: 'npm | "$(Agent.OS)" | package-lock.json'
+          restoreKeys: |
+            npm | "$(Agent.OS)"
+            npm
+          path: $(NPM_CACHE_FOLDER)
       - task: NodeTool@0
         inputs:
-          versionSpec: '$(node_version)'
-        displayName: 'Install Node.js @ $(node_version)'
+          versionSpec: '$(NODE_VERSION)'
+        displayName: 'Install Node.js @ $(NODE_VERSION)'
       - task: Npm@1
         inputs:
           command: 'install'
