@@ -62,13 +62,13 @@ stages:
       vmImage: 'ubuntu-18.04'
     steps:
       - task: Docker@2
-      inputs:
-        command: buildAndPush
-        repository: $(IMAGE_NAME)
-        dockerfile: $(DOCKERFILE_PATH)
-        containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
-        tags: |
-        $(Build.BuildId)
-        latest
-      displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(IMAGE_NAME)
+          dockerfile: $(DOCKERFILE_PATH)
+          containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+          tags: |
+          $(Build.BuildId)
+          latest
+        displayName: Build and push an image to container registry
 
