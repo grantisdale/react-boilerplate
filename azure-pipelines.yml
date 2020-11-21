@@ -31,6 +31,10 @@ stages:
         inputs:
           versionSpec: '$(NODE_VERSION)'
         displayName: 'Install Node.js @ $(NODE_VERSION)'
+      - script: |
+          npm root -g
+          ls -la ~/
+        name: Find Node Dir
       - task: Npm@1
         inputs:
           command: 'install'
