@@ -1,6 +1,6 @@
 variables:
   NODE_VERSION: 12.19.0
-  NPM_CACHE_FOLDER: ~/.npm
+  NPM_CACHE_FOLDER: /home/vsts/.npm
 
 # Run for main & release branches
 trigger:
@@ -31,9 +31,6 @@ stages:
         inputs:
           versionSpec: '$(NODE_VERSION)'
         displayName: 'Install Node.js @ $(NODE_VERSION)'
-      - script: |
-          npm config ls -l
-        displayName: 'Find Node Dir'
       - task: Npm@1
         inputs:
           command: 'install'
