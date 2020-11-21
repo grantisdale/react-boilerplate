@@ -1,6 +1,6 @@
 variables:
   NODE_VERSION: 12.19.0
-  NPM_CACHE_FOLDER: $(Pipeline.Workspace)/.npm
+  NPM_CACHE_FOLDER: ~/.npm
 
 # Run for main & release branches
 trigger:
