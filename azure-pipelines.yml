@@ -28,6 +28,10 @@ stages:
         displayName: 'Npm Install'
       - task: Npm@1
         inputs:
+          command: 'run lint'
+        displayName: 'Npm Install'
+      - task: Npm@1
+        inputs:
           command: 'custom'
           customCommand: 'run test'
         displayName: 'Run Unit Tests'
