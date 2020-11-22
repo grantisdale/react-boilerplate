@@ -11,8 +11,8 @@ variables:
   K8S_REPO: k8s-azure-kustomize-lab
   K8S_DIRECTORY: react-azure-lab-deployment
   # Git
+  GIT_AUTHOR_NAME: Grant
   GIT_COMMITTER_NAME: Grant
-  GIT_COMMITTER_EMAIL: 44140736+grantisdale@users.noreply.github.com
 
 # Run for main & release branches
 trigger:
