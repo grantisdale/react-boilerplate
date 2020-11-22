@@ -3,7 +3,9 @@ variables:
   NPM_CACHE_FOLDER: /home/vsts/.npm
   IMAGE_NAME: react-azure-lab
   DOCKERFILE_PATH: Dockerfile
+  DOCKER_REGISTRY: grantacrlab1.azurecr.io
   DOCKER_REGISTRY_SERVICE_CONNECTION: ACRLab1Registry
+  K8S_DIRECTORY : react-azure-lab-service
 
 # Run for main & release branches
 trigger:
@@ -15,60 +17,79 @@ trigger:
 # Don't run for PRs
 pr: none
 
-stages:
-- stage: Test
-  jobs:
-  - job: Test
-    pool:
-      vmImage: 'ubuntu-18.04'
-    steps:
-      - task: Cache@2
-        displayName: Cache .npm
-        inputs:
-          key: 'npm | "$(Agent.OS)" | package-lock.json'
-          restoreKeys: |
-            npm | "$(Agent.OS)"
-            npm
-          path: $(NPM_CACHE_FOLDER)
-      - task: NodeTool@0
-        inputs:
-          versionSpec: '$(NODE_VERSION)'
-        displayName: 'Install Node.js @ $(NODE_VERSION)'
-      - task: Npm@1
-        inputs:
-          command: 'install'
-        displayName: 'Npm Install'
-      - task: Npm@1
-        inputs:
-          command: 'custom'
-          customCommand: 'run lint'
-        displayName: 'Lint the JS'
-      - task: Npm@1
-        inputs:
-          command: 'custom'
-          customCommand: 'run test'
-        displayName: 'Run Unit Tests'
-      - task: PublishCodeCoverageResults@1
-        inputs:
-          codeCoverageTool: 'Cobertura'
-          summaryFileLocation: 'coverage/cobertura-coverage.xml'
-        displayName: 'Publish Code Coverage to Azure DevOps'
+# stages:
+# - stage: Test
+#   jobs:
+#   - job: Test
+#     pool:
+#       vmImage: 'ubuntu-18.04'
+#     steps:
+#       - task: Cache@2
+#         displayName: Cache .npm
+#         inputs:
+#           key: 'npm | "$(Agent.OS)" | package-lock.json'
+#           restoreKeys: |
+#             npm | "$(Agent.OS)"
+#             npm
+#           path: $(NPM_CACHE_FOLDER)
+#       - task: NodeTool@0
+#         inputs:
+#           versionSpec: '$(NODE_VERSION)'
+#         displayName: 'Install Node.js @ $(NODE_VERSION)'
+#       - task: Npm@1
+#         inputs:
+#           command: 'install'
+#         displayName: 'Npm Install'
+#       - task: Npm@1
+#         inputs:
+#           command: 'custom'
+#           customCommand: 'run lint'
+#         displayName: 'Lint the JS'
+#       - task: Npm@1
+#         inputs:
+#           command: 'custom'
+#           customCommand: 'run test'
+#         displayName: 'Run Unit Tests'
+#       - task: PublishCodeCoverageResults@1
+#         inputs:
+#           codeCoverageTool: 'Cobertura'
+#           summaryFileLocation: 'coverage/cobertura-coverage.xml'
+#         displayName: 'Publish Code Coverage to Azure DevOps'
 
-- stage: Build
-  dependsOn: Test
+# - stage: Containerise & Push
+#   jobs:
+#   - job: Build
+#     pool:
+#       vmImage: 'ubuntu-18.04'
+#     steps:
+#       - task: Docker@2
+#         inputs:
+#           command: buildAndPush
+#           repository: $(IMAGE_NAME)
+#           dockerfile: $(DOCKERFILE_PATH)
+#           containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
+#           tags: |
+#             $(Build.BuildId)
+#             latest
+#         displayName: Build and push an image to container registry
+
+- stage: Deploy
+  dependsOn:
+    # - Test
+    # - Containerise & Push
   jobs:
   - job: Build
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
-      - task: Docker@2
-        inputs:
-          command: buildAndPush
-          repository: $(IMAGE_NAME)
-          dockerfile: $(DOCKERFILE_PATH)
-          containerRegistry: $(DOCKER_REGISTRY_SERVICE_CONNECTION)
-          tags: |
-            $(Build.BuildId)
-            latest
-        displayName: Build and push an image to container registry
-
+      - script: |
+          curl -s "https://raw.githubusercontent.com/\
+          kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+        displayName: Install kustomize
+      - script: |
+          git clone https://github.com/grantisdale/k8s-azure-kustomize-lab.git
+          cd $(K8S_DIRECTORY)
+        displayName: Get K8s Manifests
+      - script: |
+          kustomize edit set image $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(Build.BuildId)
+        displayName: Get K8s Manifests
