@@ -7,6 +7,9 @@ variables:
   DOCKER_REGISTRY_SERVICE_CONNECTION: ACRLab1Registry
   K8S_REPO: k8s-azure-kustomize-lab
   K8S_DIRECTORY: react-azure-lab-deployment
+  # To satisfy git push
+  GIT_AUTHOR_NAME: Grant
+  GIT_AUTHOR_EMAIL: 44140736+grantisdale@users.noreply.github.com
 
 # Run for main & release branches
 trigger:
@@ -94,5 +97,5 @@ stages:
           cd $(K8S_REPO)/$(K8S_DIRECTORY)
           kustomize edit set image $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(Build.BuildId)
           git add kustomization.yaml
-          git commit -m "FROM AZURE PIPELINE: update kustomization.yaml for $(Build.DefinitionName). Build: $(Build.BuildId) "
+          git commit -m "FROM AZURE PIPELINE: update kustomization.yaml for $(Build.Repository.Name). Build: $(Build.BuildId) "
         displayName: Update Image Name & Deploy
