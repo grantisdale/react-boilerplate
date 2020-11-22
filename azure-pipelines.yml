@@ -17,7 +17,7 @@ trigger:
 # Don't run for PRs
 pr: none
 
-# stages:
+stages:
 # - stage: Test
 #   jobs:
 #   - job: Test
