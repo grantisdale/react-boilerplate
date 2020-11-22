@@ -89,8 +89,10 @@ stages:
         displayName: Install kustomize
       - script: |
           git clone https://github.com/grantisdale/k8s-azure-kustomize-lab.git
-          cd $(K8S_REPO)/$(K8S_DIRECTORY)
         displayName: Get K8s Manifests
       - script: |
+          cd $(K8S_REPO)/$(K8S_DIRECTORY)
           kustomize edit set image $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(Build.BuildId)
-        displayName: Get K8s Manifests
+          git add kustomization.yaml
+          git commit -m "FROM AZURE PIPELINE: update kustomization.yaml for $(Build.DefinitionName). Build: $(Build.BuildId) "
+        displayName: Update Image Name & Deploy
