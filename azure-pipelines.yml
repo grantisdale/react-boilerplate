@@ -78,7 +78,7 @@ stages:
     # - Test
     # - Containerise & Push
   jobs:
-  - job: Build
+  - job: Deploy
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
@@ -88,7 +88,7 @@ stages:
         displayName: Install kustomize
       - script: |
           git clone https://github.com/grantisdale/k8s-azure-kustomize-lab.git
-          cd $(K8S_DIRECTORY)
+          cd k8s-azure-kustomize-lab/$(K8S_DIRECTORY)
         displayName: Get K8s Manifests
       - script: |
           kustomize edit set image $(DOCKER_REGISTRY)/$(IMAGE_NAME):$(Build.BuildId)
